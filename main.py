@@ -92,7 +92,6 @@ def recognize_image(image_path):
             return base64.b64encode(img_file.read()).decode('utf-8')
 
     # Directly use a local image file path
-    image_path = "images/t3.png"
     image_base64 = image_to_base64(image_path)
 
     # Build the prompt, for demonstration, using a placeholder text.
@@ -148,6 +147,7 @@ def process_image(image_file, folder_path):
 
 
 
+
 def append_to_excel(file_path, data):
     """
     将数据追加写入到指定的Excel文件中。
@@ -158,23 +158,18 @@ def append_to_excel(file_path, data):
     with lock:  # 使用锁来保证线程安全
         df_new = pd.DataFrame([data], columns=['Image_Name', 'Text_Output', 'AI_Response'])
         
-        if os.path.exists(file_path):  # 如果文件存在，读取现有的Excel文件
-            df_existing = pd.read_excel(file_path)
-            
-            # 合并新旧数据，保持列的一致性
-            all_columns = sorted(set(df_existing.columns.union(df_new.columns)), key=lambda x: (x in df_existing.columns, x))
-            df_existing = df_existing.reindex(columns=all_columns, fill_value='')
-            df_new = df_new.reindex(columns=all_columns, fill_value='')
-            
-            # 避免重复添加相同的数据
-            df_combined = pd.concat([df_existing, df_new[~df_new.isin(df_existing.to_dict('list')).all(axis=1)]], ignore_index=True)
+        if os.path.exists(file_path):  # 如果文件存在，以追加模式打开
+            with pd.ExcelWriter(file_path, mode='a', engine='openpyxl', if_sheet_exists='overlay') as writer:
+                # 计算新数据应该插入的起始行号
+                start_row = len(pd.read_excel(file_path)) + 1
+                df_new.to_excel(writer, sheet_name='Sheet1', index=False, header=False, startrow=start_row)
         else:
-            df_combined = df_new
+            # 如果文件不存在，则创建新文件并写入表头和数据
+            df_new.to_excel(file_path, index=False, sheet_name='Sheet1', engine='openpyxl')
         
-        # 写入Excel文件
-        df_combined.to_excel(file_path, index=False, sheet_name='Sheet1', engine='openpyxl')
         print(f"数据已成功写入或追加到 {file_path}")
-        
+
+
                 
 def process_and_save(image_file, folder_path, excel_path):
     result = process_image(image_file, folder_path)  # 处理图片获取结果
