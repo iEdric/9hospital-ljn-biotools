@@ -1,0 +1,2 @@
+THE POWER OF STORYTELLING FOR LEADERS
+ดร.วิทย์ สิทธิเวคิน

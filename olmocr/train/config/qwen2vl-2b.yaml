@@ -1,0 +1,84 @@
+model:
+  name_or_path: Qwen/Qwen2-VL-2B-Instruct
+  arch: causal
+  use_flash_attn: true
+
+wandb:
+  project: pdelfin
+  entity: ai2-llm
+
+# TODO This is not used
+format:
+  instruction_template: "Original:"
+  response_template: "Rewritten:"
+  # Template from here: https://github.com/QwenLM/Qwen2/blob/main/examples/sft/finetune.py#L30
+  chat_template: |
+    {% for message in messages %}
+      {{'<|im_start|>' + message['role'] + '\n' + message['content']}}
+      {% if loop.last %}
+        {{ '<|im_end|>'}}
+      {% else %}
+        {{ '<|im_end|>\n' }}
+      {% endif %}
+    {% endfor %}
+
+generate:
+  max_length: 4096
+
+train_data:
+  seed: 1337
+  sources:
+    - name: openai_batch_data_v2
+      query_glob_path: s3://ai2-oe-data/jakep/openai_batch_data_v2/*.jsonl
+      response_glob_path: s3://ai2-oe-data/jakep/openai_batch_done_v2/*.json
+      backend:
+        - openai
+      size: 100_000
+
+valid_data:
+  sources:
+    - name: openai_batch_data_eval_mini
+      query_glob_path: s3://ai2-oe-data/jakep/openai_batch_data_eval_mini/*.jsonl
+      response_glob_path: s3://ai2-oe-data/jakep/openai_batch_done_eval_mini/*.json
+      backend:
+        - openai
+      size: 100_000
+
+# Mostly pulled from https://github.com/QwenLM/Qwen2/blob/main/examples/sft/finetune.sh
+hparams:
+  batch_size: 1
+  eval_batch_size: 1
+  gradient_accumulation_steps: 4
+  gradient_checkpointing: false
+  clip_grad_norm: 1.0
+  learning_rate: 3e-4
+  max_steps: 2000
+  pad_multiple_of: 16
+  log_every_steps: 50
+  eval_every_steps: 1000
+  optim: adamw_torch
+  lr_scheduler: cosine
+  weight_decay: 0.01
+  warmup_ratio: 0.03
+
+# From https://github.com/QwenLM/Qwen2/blob/main/examples/sft/finetune.py
+# Disable LORA for now, because we want the visual network to get trained too
+# lora:
+#   rank: 32
+#   alpha: 32
+#   dropout: 0.05
+#   task_type: causal_lm
+#   target_modules:
+#       - q_proj
+#       - k_proj
+#       - v_proj
+#       - o_proj
+#       - gate_proj
+#       - up_proj
+#       - down_proj
+
+save:
+  path: s3://ai2-oe-data/jakep/experiments/qwen2vl-pdf/v1/models/
+  save_every_steps: 1000
+
+max_workers: 10

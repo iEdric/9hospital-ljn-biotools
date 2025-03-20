@@ -1,0 +1,11 @@
+Master - 7 1/4 - 36"
+Master Bath - 7 1/4 - 30"
+Laundry - 4 3/4 - 36"
+Bath - 7 1/4 - 24"
+MUD - 7 - 36"
+UTIL - 8 1/4 - 36"
+Down Bath - 7 1/4 - 32"
+But Kit - 6 3/4 - 30"
+Pantry - 4 3/8 - 24"
+1/2 Guest - 22 9/8 - 32"
+1/2 Guest Bath 5" - 24'

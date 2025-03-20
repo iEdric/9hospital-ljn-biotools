@@ -1,0 +1,84 @@
+model:
+  name_or_path: Qwen/Qwen2-VL-7B-Instruct
+  arch: causal
+  use_flash_attn: true
+
+wandb:
+  project: pdelfin
+  entity: ai2-llm
+
+generate:
+  max_length: 8192
+
+train_data:
+  seed: 1337
+  cache_location: /data/jakep/pdfdata/pdelfin_cache
+  sources:
+    - name: openai_batch_data_v5_1_train
+      response_glob_path: /data/jakep/pdfdata/openai_batch_data_v5_1_train_done/*.json
+      target_longest_image_dim: 1024
+      target_anchor_text_len: 6000
+    - name: openai_batch_data_v5_1_iabooks_train
+      response_glob_path: /data/jakep/pdfdata/openai_batch_data_v5_1_iabooks_train_done/*.json
+      target_longest_image_dim: 1024
+      target_anchor_text_len: 6000
+
+valid_data:
+  cache_location: /data/jakep/pdfdata/pdelfin_cache
+  metric_for_best_model: openai_batch_data_v5_1_eval_loss
+  sources:
+    # These tend to be small, so you can load from s3 it's no big deal
+    - name: openai_batch_data_v5_1_eval
+      response_glob_path: s3://ai2-oe-data/jakep/pdfdata/openai_batch_done_v5_1_eval/*.json
+      target_longest_image_dim: 1024
+      target_anchor_text_len: 6000
+    - name: openai_batch_data_v5_1_iabooks_eval
+      response_glob_path: s3://ai2-oe-data/jakep/pdfdata/openai_batch_done_v5_1_iabooks_eval/*.json
+      target_longest_image_dim: 1024
+      target_anchor_text_len: 6000
+
+
+
+# Mostly pulled from https://github.com/QwenLM/Qwen2/blob/main/examples/sft/finetune.sh
+hparams:
+  batch_size: 1
+  eval_batch_size: 1
+  gradient_accumulation_steps: 4
+  gradient_checkpointing: true
+  clip_grad_norm: 1.0
+  learning_rate: 1e-4
+  max_steps: 10000
+  pad_multiple_of: 16
+  log_every_steps: 10
+  eval_every_steps: 100
+  optim: adamw_torch
+  lr_scheduler: cosine
+  weight_decay: 0.01
+  warmup_ratio: 0.03
+
+# From https://github.com/QwenLM/Qwen2/blob/main/examples/sft/finetune.py
+lora:
+  rank: 32
+  alpha: 32
+  dropout: 0.05
+  task_type: causal_lm
+  target_modules:
+      - q_proj
+      - k_proj
+      - v_proj
+      - o_proj
+      - gate_proj
+      - up_proj
+      - down_proj
+      - visual.blocks.[0-9]+.attn.qkv
+      - visual.blocks.[0-9]+.attn.proj
+      - visual.blocks.[0-9]+.mlp.fc1
+      - visual.blocks.[0-9]+.mlp.fc2
+      - visual.merger.mlp.0
+      - visual.merger.mlp.2
+
+save:
+  path: s3://ai2-oe-data/jakep/experiments/qwen2vl-pdf/v1/models/
+  save_every_steps: 1000
+
+max_workers: 10

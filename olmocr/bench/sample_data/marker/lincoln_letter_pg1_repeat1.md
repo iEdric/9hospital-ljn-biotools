@@ -1,0 +1,3 @@
+Crecutive Mansion, Mashington City, January 100 1864. Major General Hitcherts Commissioner of Cachanges, is anthorized and directed to offer Brigadier General Trimble), now a prisoner of war in Dort Inchienny, in exchange for Major lithite, whi is held as a presences at Richmond). Ite is also directed to vend forward the offer of exchange by Stenny in. Warfreld, Eag. of ISaltimore, under aflag of mice, and give him apass to tity Birt. Abraham Sincoln 
+
+![](_page_0_Picture_1.jpeg)

@@ -1,0 +1,11 @@
+Master  - 7 2/4 - 36" 
+MasterBath  - 7 1/4 - 30" 
+Laundry  - 4 3/4 - 36 1/2" 
+Bath  - 7 1/4 - 24" 
+MUD  - 7 - 36" 
+UTIL  - 8 1/4 - 36" 
+DWN BATH  - 7 1/4 - 32 1/2" 
+BUT KIT  - 6 3/4 - 30 
+PANTRY  - 4 3/4 - 24"  
+6 West  - 32 9/8 - 32" 
+6 Guest Bath 5" - 24"

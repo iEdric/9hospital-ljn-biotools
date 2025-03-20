@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ id }}</title>
+    <style>
+        /* CSS styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+        .document {
+            background-color: #fff;
+            padding: 40px;
+            margin: 20px;
+            width: 60%;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            line-height: 1.8;
+        }
+        .page-section {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .page-section:hover {
+            background-color: #f5f5f5;
+        }
+        .page-section .text {
+            flex: 2;
+            padding: 10px;
+            text-align: justify;
+        }
+        .page-section .image {
+            flex: 1;
+            padding: 10px;
+        }
+        .page-section img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ccc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse; /* Ensures that borders are collapsed to give a clean look */
+            margin-bottom: 1.5em; /* Adds some space below the table */
+        }
+
+        th, td {
+            border: 1px solid #ddd; /* 1px solid border for table cells */
+            padding: 12px 15px; /* Adds some padding for better spacing inside the cells */
+            text-align: left; /* Aligns text to the left */
+            vertical-align: top; /* Aligns content to the top of the cell */
+            font-size: 14px; /* Adjusts font size for readability */
+        }
+
+        th {
+            background-color: #f4f4f4; /* Light background for table headers */
+            font-weight: bold; /* Bolds header text */
+            text-transform: uppercase; /* Makes header text uppercase */
+            letter-spacing: 0.05em; /* Adds slight spacing between letters for readability */
+            border-bottom: 2px solid #ccc; /* Slightly thicker bottom border for headers */
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9; /* Alternates row background color */
+        }
+
+        tr:hover {
+            background-color: #f1f1f1; /* Highlights row on hover for better interaction */
+        }
+
+        td img {
+            max-width: 100%; /* Ensures any images in table cells scale properly */
+            height: auto; 
+            display: block;
+        }
+
+        table caption {
+            caption-side: bottom; /* Position caption at the bottom of the table */
+            text-align: right;
+            font-size: 12px;
+            color: #777;
+            padding: 5px 0;
+        }
+
+    </style>
+
+    <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+        processHtmlClass: 'mathjax-process'  // Class name for areas where LaTeX should be processed
+      }
+    };
+  </script>
+    <script type="text/javascript" id="MathJax-script" async 
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+</head>
+<body>
+    <div class="document">
+        {% for page in pages %}
+        <div class="page-section" id="page-{{ page.page_num }}">
+            <div class="text">{{ page.text|safe }}</div>
+            {% if page.image %}
+            <div class="image">
+                <a href="{{ s3_link }}#page={{ page.page_num  }}" target="_blank">
+                <img src="data:image/webp;base64,{{ page.image }}" alt="Page {{ page.page_num }} Image">
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+
+</body>
+</html>
